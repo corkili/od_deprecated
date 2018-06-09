@@ -12,7 +12,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.StringUtil;
 
-import org.kai.od.dao.IdGenerator;
+import org.kai.od.dao.IdPool;
 import org.kai.od.io.CheckObjectException;
 import org.kai.od.io.SerializableData;
 
@@ -103,14 +103,14 @@ public class TopCategory implements SerializableData {
 
     @Override
     public boolean checkObject() {
-        if (this.id == null || this.id >= IdGenerator.getIdGenerator().currentTopCategoryId()) {
+        if (this.id == null || IdPool.topCategoryIdPool().existId(this.id)) {
             return false;
         }
         if (StringUtil.isNullOrEmpty(name)) {
             return false;
         }
         for (Long key : subCategories) {
-            if (key == null || key >= IdGenerator.getIdGenerator().currentCategoryId()) {
+            if (key == null || IdPool.categoryIdPool().existId(key)) {
                 return false;
             }
         }
