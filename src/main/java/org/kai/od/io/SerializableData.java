@@ -1,12 +1,13 @@
 package org.kai.od.io;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface SerializableData {
-    void readObject(InputStream input) throws CheckObjectException;
+    void readObject(InputStream input) throws CheckObjectException, IOException;
 
-    void writeObject(OutputStream output) throws CheckObjectException;
+    void writeObject(OutputStream output) throws CheckObjectException, IOException;
 
     boolean checkObject();
 }
