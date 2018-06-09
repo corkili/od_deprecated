@@ -110,7 +110,7 @@ public class TopCategory implements SerializableData {
             return false;
         }
         for (Long key : subCategories) {
-            if (key == null || key >= IdGenerator.getIdGenerator().currentTopCategoryId()) {
+            if (key == null || key >= IdGenerator.getIdGenerator().currentCategoryId()) {
                 return false;
             }
         }
