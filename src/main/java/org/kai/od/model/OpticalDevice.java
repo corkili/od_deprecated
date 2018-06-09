@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.primitives.Ints;
 import io.netty.buffer.ByteBuf;
@@ -243,5 +244,41 @@ public class OpticalDevice implements SerializableData {
         byte[] bytes = new byte[len];
         buf.readBytes(bytes);
         return new String(bytes, CharsetUtil.UTF_8);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OpticalDevice that = (OpticalDevice) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(topCategory, that.topCategory) &&
+                Objects.equals(category, that.category) &&
+                Objects.equals(price, that.price) &&
+                Objects.equals(characteristics, that.characteristics) &&
+                Objects.equals(describe, that.describe) &&
+                Objects.equals(representativeManufactors, that.representativeManufactors);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, type, topCategory, category, price, characteristics, describe, representativeManufactors);
+    }
+
+    @Override
+    public String toString() {
+        return "OpticalDevice{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", topCategory=" + topCategory +
+                ", category=" + category +
+                ", price=" + price +
+                ", characteristics='" + characteristics + '\'' +
+                ", describe='" + describe + '\'' +
+                ", representativeManufactors=" + representativeManufactors +
+                '}';
     }
 }

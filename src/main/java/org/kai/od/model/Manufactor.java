@@ -3,6 +3,7 @@ package org.kai.od.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 import com.google.common.primitives.Ints;
 import io.netty.buffer.ByteBuf;
@@ -89,5 +90,27 @@ public class Manufactor implements SerializableData {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Manufactor that = (Manufactor) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return "Manufactor{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
