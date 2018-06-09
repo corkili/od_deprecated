@@ -3,8 +3,16 @@ package org.kai.od.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.google.common.primitives.Ints;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.util.CharsetUtil;
+import io.netty.util.internal.StringUtil;
+
+import org.kai.od.dao.IdGenerator;
 import org.kai.od.io.CheckObjectException;
 import org.kai.od.io.SerializableData;
 
@@ -16,9 +24,9 @@ public class OpticalDevice implements SerializableData {
 
     private String type;
 
-    private TopCategory topCategory;
+    private Long topCategory;
 
-    private Category category;
+    private Long category;
 
     private Double price;
 
@@ -26,15 +34,15 @@ public class OpticalDevice implements SerializableData {
 
     private String describe;
 
-    private Map<Long, Manufactor> representativeManufactors;
+    private List<Long> representativeManufactors;
 
     public OpticalDevice() {
 
     }
 
-    public OpticalDevice(Long id, String name, String type, TopCategory topCategory, Category category,
+    public OpticalDevice(Long id, String name, String type, Long topCategory, Long category,
                          Double price, String characteristics, String describe,
-                         Map<Long, Manufactor> representativeManufactors) {
+                         List<Long> representativeManufactors) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -70,19 +78,19 @@ public class OpticalDevice implements SerializableData {
         this.type = type;
     }
 
-    public TopCategory getTopCategory() {
+    public Long getTopCategory() {
         return topCategory;
     }
 
-    public void setTopCategory(TopCategory topCategory) {
+    public void setTopCategory(Long topCategory) {
         this.topCategory = topCategory;
     }
 
-    public Category getCategory() {
+    public Long getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(Long category) {
         this.category = category;
     }
 
@@ -110,26 +118,131 @@ public class OpticalDevice implements SerializableData {
         this.describe = describe;
     }
 
-    public Map<Long, Manufactor> getRepresentativeManufactors() {
+    public List<Long> getRepresentativeManufactors() {
         return representativeManufactors;
     }
 
-    public void setRepresentativeManufactors(Map<Long, Manufactor> representativeManufactors) {
+    public void setRepresentativeManufactors(List<Long> representativeManufactors) {
         this.representativeManufactors = representativeManufactors;
     }
 
     @Override
     public void readObject(InputStream input) throws CheckObjectException, IOException {
-
+        byte[] bodyLenBytes = new byte[4];
+        if (input.read(bodyLenBytes) != 4) {
+            throw new IOException("body length field is destroyed");
+        }
+        int bodyLen = Ints.fromByteArray(bodyLenBytes);
+        byte[] body = new byte[bodyLen];
+        if (input.read(body) != bodyLen) {
+            throw new IOException("body field is destroyed");
+        }
+        ByteBuf buf = Unpooled.wrappedBuffer(body);
+        // read id
+        this.id = buf.readLong();
+        // read name
+        this.name = readString(buf);
+        // read type
+        this.type = readString(buf);
+        // read top category
+        this.category = buf.readLong();
+        // read category
+        this.category = buf.readLong();
+        // read price
+        this.price = buf.readDouble();
+        // read characteristics
+        this.characteristics = readString(buf);
+        // read describe
+        this.describe = readString(buf);
+        // read representative manufactors
+        int size = buf.readInt();
+        this.representativeManufactors = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            this.representativeManufactors.add(buf.readLong());
+        }
+        if (!checkObject()) {
+            throw new CheckObjectException("object is invalid! " + this);
+        }
     }
 
     @Override
     public void writeObject(OutputStream output) throws CheckObjectException, IOException {
-
+        if (!checkObject()) {
+            throw new CheckObjectException("object is invalid! " + this);
+        }
+        ByteBuf buf = Unpooled.buffer();
+        // write id
+        buf.writeLong(this.id);
+        // write name
+        writeString(buf, this.name);
+        // write type
+        writeString(buf, this.type);
+        // write top category
+        buf.writeLong(this.topCategory);
+        // write category
+        buf.writeLong(this.category);
+        // write price
+        buf.writeDouble(this.price);
+        // write characteristics
+        writeString(buf, this.characteristics);
+        // write describe
+        writeString(buf, this.describe);
+        // write representative manufactors
+        buf.writeInt(representativeManufactors.size());
+        representativeManufactors.forEach(buf::writeLong);
+        // output
+        int bodyLen = buf.readableBytes();
+        byte[] body = new byte[bodyLen];
+        buf.readBytes(body);
+        output.write(Ints.toByteArray(bodyLen));
+        output.write(body);
     }
 
     @Override
     public boolean checkObject() {
-        return false;
+        IdGenerator idGenerator = IdGenerator.getIdGenerator();
+        if (this.id == null || this.id >= idGenerator.currentOpticalDeviceId()) {
+            return false;
+        }
+        if (StringUtil.isNullOrEmpty(this.name)) {
+            return false;
+        }
+        if (StringUtil.isNullOrEmpty(this.type)) {
+            return false;
+        }
+        if (topCategory == null || topCategory >= idGenerator.currentTopCategoryId()) {
+            return false;
+        }
+        if (category == null || category >= idGenerator.currentCategoryId()) {
+            return false;
+        }
+        if (price == null) {
+            return false;
+        }
+        if (StringUtil.isNullOrEmpty(characteristics)) {
+            return false;
+        }
+        if (StringUtil.isNullOrEmpty(describe)) {
+            return false;
+        }
+        for (Long k : representativeManufactors) {
+            if (k == null || k >= idGenerator.currentManufactorId()) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private void writeString(ByteBuf buf, String str) {
+        byte[] bytes = str.getBytes(CharsetUtil.UTF_8);
+        buf.writeInt(bytes.length);
+        buf.writeBytes(bytes);
+    }
+    
+    private String readString(ByteBuf buf) {
+        int len = buf.readInt();
+        byte[] bytes = new byte[len];
+        buf.readBytes(bytes);
+        return new String(bytes, CharsetUtil.UTF_8);
     }
 }
