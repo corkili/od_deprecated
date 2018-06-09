@@ -1,5 +1,6 @@
 package org.kai.od.model;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
@@ -45,13 +46,85 @@ public class OpticalDevice implements SerializableData {
         this.representativeManufactors = representativeManufactors;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public TopCategory getTopCategory() {
+        return topCategory;
+    }
+
+    public void setTopCategory(TopCategory topCategory) {
+        this.topCategory = topCategory;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public String getCharacteristics() {
+        return characteristics;
+    }
+
+    public void setCharacteristics(String characteristics) {
+        this.characteristics = characteristics;
+    }
+
+    public String getDescribe() {
+        return describe;
+    }
+
+    public void setDescribe(String describe) {
+        this.describe = describe;
+    }
+
+    public Map<Long, Manufactor> getRepresentativeManufactors() {
+        return representativeManufactors;
+    }
+
+    public void setRepresentativeManufactors(Map<Long, Manufactor> representativeManufactors) {
+        this.representativeManufactors = representativeManufactors;
+    }
+
     @Override
-    public void readObject(InputStream input) throws CheckObjectException {
+    public void readObject(InputStream input) throws CheckObjectException, IOException {
 
     }
 
     @Override
-    public void writeObject(OutputStream output) throws CheckObjectException {
+    public void writeObject(OutputStream output) throws CheckObjectException, IOException {
 
     }
 

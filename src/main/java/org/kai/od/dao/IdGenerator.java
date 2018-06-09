@@ -28,20 +28,36 @@ public class IdGenerator implements SerializableData {
         nextManufactorId = new AtomicLong(0L);
     }
 
-    public Long getNextTopCategoryId() {
+    public long nextTopCategoryId() {
         return nextTopCategoryId.getAndIncrement();
     }
 
-    public Long getNextCategoryId() {
+    public long nextCategoryId() {
         return nextCategoryId.getAndIncrement();
     }
 
-    public Long getNextOpticalDeviceId() {
+    public long nextOpticalDeviceId() {
         return nextOpticalDeviceId.getAndIncrement();
     }
 
-    public Long getNextManufactorId() {
+    public long nextManufactorId() {
         return nextManufactorId.getAndIncrement();
+    }
+
+    public long currentTopCategoryId() {
+        return nextTopCategoryId.get();
+    }
+
+    public long currentCategoryId() {
+        return nextCategoryId.get();
+    }
+
+    public long currentOpticalDeviceId() {
+        return nextOpticalDeviceId.get();
+    }
+
+    public long currentManufactorId() {
+        return nextManufactorId.get();
     }
 
     @Override

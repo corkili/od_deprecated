@@ -1,8 +1,6 @@
 package org.kai.od.io;
 
-import java.io.IOException;
-
-public class CheckObjectException extends IOException {
+public class CheckObjectException extends Exception {
     public CheckObjectException() {
         super();
     }
