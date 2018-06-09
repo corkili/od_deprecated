@@ -2,6 +2,7 @@ package org.kai.od.dao;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
@@ -65,6 +66,28 @@ public class IdPool implements SerializableData {
     @Override
     public boolean checkObject() {
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IdPool idPool = (IdPool) o;
+        return Objects.equals(nextId, idPool.nextId) &&
+                Objects.equals(ids, idPool.ids);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nextId, ids);
+    }
+
+    @Override
+    public String toString() {
+        return "IdPool{" +
+                "nextId=" + nextId +
+                ", ids=" + ids +
+                '}';
     }
 
     private enum IdPoolHolder {
