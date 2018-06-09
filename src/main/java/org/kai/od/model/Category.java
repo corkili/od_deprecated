@@ -1,16 +1,16 @@
 package org.kai.od.model;
 
-import com.google.common.primitives.Ints;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.util.CharsetUtil;
-import io.netty.util.internal.StringUtil;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.primitives.Ints;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.util.CharsetUtil;
+import io.netty.util.internal.StringUtil;
 
 import org.kai.od.dao.IdGenerator;
 import org.kai.od.io.CheckObjectException;

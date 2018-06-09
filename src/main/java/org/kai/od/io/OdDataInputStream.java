@@ -59,18 +59,18 @@ public class OdDataInputStream extends InputStream {
         b[off] = (byte) c;
 
         int i = 1;
-        for (; i < len ; i++) {
+        for (; i < len; i++) {
             c = read();
             if (c == ERROR_VALUE) {
                 break;
             }
-            b[off + i] = (byte)c;
+            b[off + i] = (byte) c;
         }
         return i;
     }
 
     @Override
-    public long skip(long n)  {
+    public long skip(long n) {
         return 0;
     }
 
