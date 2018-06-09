@@ -10,7 +10,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.StringUtil;
 
-import org.kai.od.dao.IdGenerator;
+import org.kai.od.dao.IdPool;
 import org.kai.od.io.CheckObjectException;
 import org.kai.od.io.SerializableData;
 
@@ -82,7 +82,7 @@ public class Manufactor implements SerializableData {
 
     @Override
     public boolean checkObject() {
-        if (this.id == null || this.id >= IdGenerator.getIdGenerator().currentManufactorId()) {
+        if (this.id == null || IdPool.manufactorIdPool().existId(this.id)) {
             return false;
         }
         if (StringUtil.isNullOrEmpty(name)) {

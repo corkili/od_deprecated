@@ -12,7 +12,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.StringUtil;
 
-import org.kai.od.dao.IdGenerator;
+import org.kai.od.dao.IdPool;
 import org.kai.od.io.CheckObjectException;
 import org.kai.od.io.SerializableData;
 
@@ -200,8 +200,7 @@ public class OpticalDevice implements SerializableData {
 
     @Override
     public boolean checkObject() {
-        IdGenerator idGenerator = IdGenerator.getIdGenerator();
-        if (this.id == null || this.id >= idGenerator.currentOpticalDeviceId()) {
+        if (this.id == null || IdPool.opticalDevice().existId(this.id)) {
             return false;
         }
         if (StringUtil.isNullOrEmpty(this.name)) {
@@ -210,10 +209,10 @@ public class OpticalDevice implements SerializableData {
         if (StringUtil.isNullOrEmpty(this.type)) {
             return false;
         }
-        if (topCategory == null || topCategory >= idGenerator.currentTopCategoryId()) {
+        if (topCategory == null || IdPool.topCategoryIdPool().existId(topCategory)) {
             return false;
         }
-        if (category == null || category >= idGenerator.currentCategoryId()) {
+        if (category == null || IdPool.categoryIdPool().existId(category)) {
             return false;
         }
         if (price == null) {
@@ -226,7 +225,7 @@ public class OpticalDevice implements SerializableData {
             return false;
         }
         for (Long k : representativeManufactors) {
-            if (k == null || k >= idGenerator.currentManufactorId()) {
+            if (k == null || IdPool.manufactorIdPool().existId(k)) {
                 return false;
             }
         }
