@@ -1,11 +1,14 @@
 package org.kai.od.dao;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+
+import com.google.common.primitives.Ints;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 import org.kai.od.io.CheckObjectException;
 import org.kai.od.io.SerializableData;
@@ -54,18 +57,84 @@ public class IdPool implements SerializableData {
     }
 
     @Override
-    public void readObject(InputStream input) throws CheckObjectException {
-
+    public void readObject(InputStream input) throws CheckObjectException, IOException {
+        byte[] bodyLenBytes = new byte[4];
+        if (input.read(bodyLenBytes) != 4) {
+            throw new IOException("body length field is destroyed");
+        }
+        int bodyLen = Ints.fromByteArray(bodyLenBytes);
+        byte[] body = new byte[bodyLen];
+        if (input.read(body) != bodyLen) {
+            throw new IOException("body field is destroyed");
+        }
+        ByteBuf buf = Unpooled.wrappedBuffer(body);
+        // read id
+        this.nextId = new AtomicLong(buf.readLong());
+        // read ids
+        int size = buf.readInt();
+        int pairCount = buf.readInt();
+        this.ids = new TreeSet<>();
+        for (int i = 0; i < pairCount; i++) {
+            long start = buf.readLong();
+            long end = buf.readLong();
+            for (long id = start; id <= end; id += 1) {
+                this.ids.add(id);
+            }
+        }
+        if (this.ids.size() != size) {
+            throw new IOException("object data is invalid" + this);
+        }
+        if (!checkObject()) {
+            throw new CheckObjectException("object is invalid! " + this);
+        }
     }
 
     @Override
-    public void writeObject(OutputStream output) throws CheckObjectException {
-
+    public void writeObject(OutputStream output) throws CheckObjectException, IOException {
+        if (!checkObject()) {
+            throw new CheckObjectException("object is invalid! " + this);
+        }
+        ByteBuf buf = Unpooled.buffer();
+        // write nextId
+        buf.writeLong(this.nextId.get());
+        // write ids
+        buf.writeInt(ids.size());
+        Long[] tmp = (Long[]) ids.toArray();
+        List<Long> pairs = new ArrayList<>();
+        int n = tmp.length - 1;
+        pairs.add(tmp[0]);
+        for (int i = 0; i < n; i++) {
+            if (tmp[i] + 1 != tmp[i + 1]) {
+                pairs.add(tmp[i]);
+                pairs.add(tmp[i + 1]);
+            }
+        }
+        if (pairs.size() % 2 == 1) {
+            pairs.add(tmp[n]);
+        }
+        int pairCount = pairs.size() / 2;
+        buf.writeInt(pairCount);
+        for (int i = 0; i < pairs.size(); i += 2) {
+            buf.writeLong(pairs.get(i));
+            buf.writeLong(pairs.get(i + 1));
+        }
+        // output
+        int bodyLen = buf.readableBytes();
+        byte[] body = new byte[bodyLen];
+        buf.readBytes(body);
+        output.write(Ints.toByteArray(bodyLen));
+        output.write(body);
     }
 
     @Override
     public boolean checkObject() {
-        return false;
+        if (nextId == null || ids == null) {
+            return false;
+        }
+        if (existId(nextId.get())) {
+            return false;
+        }
+        return true;
     }
 
     @Override
