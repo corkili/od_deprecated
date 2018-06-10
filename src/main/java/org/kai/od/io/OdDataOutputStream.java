@@ -28,6 +28,10 @@ public class OdDataOutputStream extends OutputStream {
         }
     }
 
+    public byte[] getData() {
+        return Arrays.copyOf(data, pos);
+    }
+
     @Override
     public void write(int b) {
         if (pos >= capacity) {

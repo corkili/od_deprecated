@@ -107,7 +107,7 @@ public class Category implements SerializableData {
 
     @Override
     public boolean checkObject() {
-        if (this.id == null || IdPool.topCategoryIdPool().existId(this.id)) {
+        if (this.id == null || IdPool.categoryIdPool().existId(this.id)) {
             return false;
         }
         if (StringUtil.isNullOrEmpty(name)) {

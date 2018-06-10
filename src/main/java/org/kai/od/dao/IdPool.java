@@ -56,6 +56,10 @@ public class IdPool implements SerializableData {
         return ids.contains(id);
     }
 
+    public void clear() {
+        ids.clear();
+    }
+
     @Override
     public Long getId() {
         return 0L;
