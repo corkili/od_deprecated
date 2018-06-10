@@ -1,11 +1,8 @@
-package org.kai.od.dao;
+package org.kai.od.io;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.kai.od.io.SerializableData;
 
 public class DataManager {
 
@@ -40,6 +37,10 @@ public class DataManager {
                 dataMap.keySet().forEach(idPool::addId);
             }
         }
+    }
+
+    public SerializableData get(Long id) {
+        return dataMap.get(id);
     }
 
     public Collection<SerializableData> getAllData() {

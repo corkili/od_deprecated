@@ -13,7 +13,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.StringUtil;
 
-import org.kai.od.dao.IdPool;
+import org.kai.od.io.IdPool;
 import org.kai.od.io.CheckObjectException;
 import org.kai.od.io.SerializableData;
 
@@ -35,7 +35,7 @@ public class OpticalDevice implements SerializableData {
 
     private String describe;
 
-    private List<Long> representativeManufactors;
+    private Long representativeManufactor;
 
     public OpticalDevice() {
 
@@ -43,7 +43,7 @@ public class OpticalDevice implements SerializableData {
 
     public OpticalDevice(Long id, String name, String type, Long topCategory, Long category,
                          Double price, String characteristics, String describe,
-                         List<Long> representativeManufactors) {
+                         Long representativeManufactor) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -52,7 +52,7 @@ public class OpticalDevice implements SerializableData {
         this.price = price;
         this.characteristics = characteristics;
         this.describe = describe;
-        this.representativeManufactors = representativeManufactors;
+        this.representativeManufactor = representativeManufactor;
     }
 
     @Override
@@ -121,12 +121,12 @@ public class OpticalDevice implements SerializableData {
         this.describe = describe;
     }
 
-    public List<Long> getRepresentativeManufactors() {
-        return representativeManufactors;
+    public Long getRepresentativeManufactor() {
+        return representativeManufactor;
     }
 
-    public void setRepresentativeManufactors(List<Long> representativeManufactors) {
-        this.representativeManufactors = representativeManufactors;
+    public void setRepresentativeManufactor(Long representativeManufactor) {
+        this.representativeManufactor = representativeManufactor;
     }
 
     @Override
@@ -157,12 +157,8 @@ public class OpticalDevice implements SerializableData {
         this.characteristics = readString(buf);
         // read describe
         this.describe = readString(buf);
-        // read representative manufactors
-        int size = buf.readInt();
-        this.representativeManufactors = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            this.representativeManufactors.add(buf.readLong());
-        }
+        // read representative manufactor
+        this.representativeManufactor = buf.readLong();
         if (!checkObject()) {
             throw new CheckObjectException("object is invalid! " + this);
         }
@@ -190,9 +186,8 @@ public class OpticalDevice implements SerializableData {
         writeString(buf, this.characteristics);
         // write describe
         writeString(buf, this.describe);
-        // write representative manufactors
-        buf.writeInt(representativeManufactors.size());
-        representativeManufactors.forEach(buf::writeLong);
+        // write representative manufactor
+        buf.writeLong(representativeManufactor);
         // output
         int bodyLen = buf.readableBytes();
         byte[] body = new byte[bodyLen];
@@ -227,10 +222,9 @@ public class OpticalDevice implements SerializableData {
         if (StringUtil.isNullOrEmpty(describe)) {
             return false;
         }
-        for (Long k : representativeManufactors) {
-            if (k == null || IdPool.manufactorIdPool().existId(k)) {
-                return false;
-            }
+        if (representativeManufactor == null
+                || !IdPool.manufactorIdPool().existId(representativeManufactor)) {
+            return false;
         }
         return true;
     }
@@ -261,12 +255,12 @@ public class OpticalDevice implements SerializableData {
                 Objects.equals(price, that.price) &&
                 Objects.equals(characteristics, that.characteristics) &&
                 Objects.equals(describe, that.describe) &&
-                Objects.equals(representativeManufactors, that.representativeManufactors);
+                Objects.equals(representativeManufactor, that.representativeManufactor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, type, topCategory, category, price, characteristics, describe, representativeManufactors);
+        return Objects.hash(id, name, type, topCategory, category, price, characteristics, describe, representativeManufactor);
     }
 
     @Override
@@ -280,7 +274,7 @@ public class OpticalDevice implements SerializableData {
                 ", price=" + price +
                 ", characteristics='" + characteristics + '\'' +
                 ", describe='" + describe + '\'' +
-                ", representativeManufactors=" + representativeManufactors +
+                ", representativeManufactor=" + representativeManufactor +
                 '}';
     }
 }
