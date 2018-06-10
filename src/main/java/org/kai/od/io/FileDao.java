@@ -1,4 +1,4 @@
-package org.kai.od.dao;
+package org.kai.od.io;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +13,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.apache.commons.io.FileUtils;
 
-import org.kai.od.io.CheckObjectException;
-import org.kai.od.io.OdDataInputStream;
-import org.kai.od.io.OdDataOutputStream;
-import org.kai.od.io.SerializableData;
 import org.kai.od.model.Category;
 import org.kai.od.model.Manufactor;
 import org.kai.od.model.OpticalDevice;

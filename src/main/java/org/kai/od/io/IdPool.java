@@ -1,4 +1,4 @@
-package org.kai.od.dao;
+package org.kai.od.io;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,9 +9,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.google.common.primitives.Ints;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
-import org.kai.od.io.CheckObjectException;
-import org.kai.od.io.SerializableData;
 
 public class IdPool implements SerializableData {
 

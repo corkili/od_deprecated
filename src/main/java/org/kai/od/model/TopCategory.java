@@ -13,7 +13,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.StringUtil;
 
-import org.kai.od.dao.IdPool;
+import org.kai.od.io.IdPool;
 import org.kai.od.io.CheckObjectException;
 import org.kai.od.io.SerializableData;
 
@@ -24,6 +24,10 @@ public class TopCategory implements SerializableData {
     private String name;
 
     private List<Long> subCategories;
+
+    public TopCategory() {
+        subCategories = new ArrayList<>();
+    }
 
     @Override
     public Long getId() {

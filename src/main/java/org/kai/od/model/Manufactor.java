@@ -11,7 +11,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.StringUtil;
 
-import org.kai.od.dao.IdPool;
+import org.kai.od.io.IdPool;
 import org.kai.od.io.CheckObjectException;
 import org.kai.od.io.SerializableData;
 
@@ -20,6 +20,10 @@ public class Manufactor implements SerializableData {
     private Long id;
 
     private String name;
+
+    public Manufactor() {
+
+    }
 
     @Override
     public Long getId() {
