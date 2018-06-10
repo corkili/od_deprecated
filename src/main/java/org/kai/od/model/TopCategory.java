@@ -25,10 +25,12 @@ public class TopCategory implements SerializableData {
 
     private List<Long> subCategories;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

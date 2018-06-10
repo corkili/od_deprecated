@@ -57,6 +57,15 @@ public class IdPool implements SerializableData {
     }
 
     @Override
+    public Long getId() {
+        return 0L;
+    }
+
+    @Override
+    public void setId(Long id) {
+    }
+
+    @Override
     public void readObject(InputStream input) throws CheckObjectException, IOException {
         byte[] bodyLenBytes = new byte[4];
         if (input.read(bodyLenBytes) != 4) {
